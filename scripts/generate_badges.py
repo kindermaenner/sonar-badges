@@ -30,15 +30,10 @@ def fetch_metrics(project_key):
         "metricKeys": ",".join(METRICS),
     }
 
-    headers = {
-        "Authorization": f"Bearer {TOKEN}",
-        "Accept": "application/json",
-    }
-
     response = requests.get(
         url,
         params=params,
-        headers=headers,
+        auth=(TOKEN, ""),
         timeout=30,
     )
 
@@ -63,7 +58,6 @@ def fetch_metrics(project_key):
         metric["metric"]: metric.get("value", "0")
         for metric in measures
     }
-
 
 def make_badge(label, value, color="#4c1"):
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">

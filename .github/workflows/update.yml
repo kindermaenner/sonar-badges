@@ -30,7 +30,7 @@ jobs:
           echo "SONAR_TOKEN set: $([[ -n "$SONAR_TOKEN" ]] && echo yes || echo no)"
 
           curl --fail-with-body \
-            -H "Authorization: Bearer $SONAR_TOKEN" \
+            -u "$SONAR_TOKEN:" \
             -H "Accept: application/json" \
             "$SONAR_HOST_URL/api/measures/component?component=${{ inputs.project }}&metricKeys=coverage%2Cbugs%2Ccode_smells%2Csecurity_hotspots"
 
