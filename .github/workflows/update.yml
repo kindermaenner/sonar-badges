@@ -24,19 +24,6 @@ jobs:
       - name: Install dependencies
         run: pip3 install requests
 
-      - name: Test SonarQube API
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          echo "SONAR_HOST_URL=$SONAR_HOST_URL"
-          echo "SONAR_TOKEN set: $([[ -n "$SONAR_TOKEN" ]] && echo yes || echo no)"
-
-          curl --fail-with-body \
-            -u "$SONAR_TOKEN:" \
-            -H "Accept: application/json" \
-            "$SONAR_HOST_URL/api/measures/component?component=${{ inputs.project }}&metricKeys=coverage%2Cbugs%2Ccode_smells%2Csecurity_hotspots"
-
       - name: Generate Badges
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
