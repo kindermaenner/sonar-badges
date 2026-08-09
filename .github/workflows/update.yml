@@ -21,16 +21,35 @@ jobs:
       - name: Install dependencies
         run: pip3 install requests
 
+      - name: Test SonarQube API
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          echo "SONAR_HOST_URL=$SONAR_HOST_URL"
+          echo "SONAR_TOKEN set: $([[ -n "$SONAR_TOKEN" ]] && echo yes || echo no)"
+
+          curl --fail-with-body \
+            -H "Authorization: Bearer $SONAR_TOKEN" \
+            -H "Accept: application/json" \
+            "$SONAR_HOST_URL/api/measures/component?component=${{ inputs.project }}&metricKeys=coverage%2Cbugs%2Ccode_smells%2Csecurity_hotspots"
+
       - name: Generate Badges
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: python3 scripts/generate_badges.py ${{ github.event.inputs.project }}
+        run: |
+          python3 scripts/generate_badges.py "${{ inputs.project }}"
 
       - name: Commit badges
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add badges/${{ github.event.inputs.project }}/*.svg
-          git commit -m "Update Sonar badges for ${{ github.event.inputs.project }}" || echo "No changes to commit"
+
+          git add "badges/${{ inputs.project }}"/*.svg
+
+          git commit \
+            -m "Update Sonar badges for ${{ inputs.project }}" \
+            || echo "No changes to commit"
+
           git push
