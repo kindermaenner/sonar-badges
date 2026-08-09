@@ -1,0 +1,36 @@
+name: Generate Badges
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "SonarQube project key"
+        required: true
+        type: string
+
+jobs:
+  badges:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        run: sudo apt-get install python3 python3-pip -y
+
+      - name: Install dependencies
+        run: pip3 install requests
+
+      - name: Generate Badges
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: python3 scripts/generate_badges.py ${{ github.event.inputs.project }}
+
+      - name: Commit badges
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add badges/${{ github.event.inputs.project }}/*.svg
+          git commit -m "Update Sonar badges for ${{ github.event.inputs.project }}" || echo "No changes to commit"
+          git push
