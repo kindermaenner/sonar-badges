@@ -77,44 +77,41 @@ def color_for_coverage(value):
 
 
 def fetch_metrics(project_key):
-    """Fetch all metrics from SonarQube."""
+    """Fetch metrics from SonarQube, handling potential 404s for specific metrics."""
     if not SONAR_URL:
         raise RuntimeError("SONAR_HOST_URL is not set")
-
     if not TOKEN:
         raise RuntimeError("SONAR_TOKEN is not set")
 
-    url = f"{SONAR_URL.rstrip('/')}/api/measures/component"
-
+    base_url = f"{SONAR_URL.rstrip('/')}/api/measures/component"
+    
+    # Try fetching all metrics. If it fails, try to find out which one is missing.
     params = {
         "component": project_key,
         "metricKeys": ",".join(METRICS),
     }
 
-    response = requests.get(
-        url,
-        params=params,
-        auth=(TOKEN, ""),
-        timeout=30,
-    )
-
-    print(f"SonarQube URL: {response.url}")
-    print(f"SonarQube status: {response.status_code}")
-
+    response = requests.get(base_url, params=params, auth=(TOKEN, ""), timeout=30)
+    
     if not response.ok:
-        print(f"SonarQube response: {response.text}")
-
-    response.raise_for_status()
+        print(f"Initial fetch failed: {response.status_code}. Retrying metrics individually to filter missing ones...")
+        valid_measures = []
+        for metric in METRICS:
+            p = {"component": project_key, "metricKeys": metric}
+            res = requests.get(base_url, params=p, auth=(TOKEN, ""), timeout=10)
+            if res.ok:
+                data = res.json()
+                valid_measures.extend(data.get("component", {}).get("measures", []))
+            else:
+                print(f"Skipping metric '{metric}': Sonar returned {res.status_code}")
+        
+        return {m["metric"]: m.get("value", "0") for m in valid_measures}
 
     data = response.json()
     print("SonarQube API Response:")
     print(json.dumps(data, indent=2))
-
-    if "component" not in data:
-        raise RuntimeError(f"Unexpected SonarQube response: {data}")
-
-    measures = data["component"].get("measures", [])
-
+    
+    measures = data.get("component", {}).get("measures", [])
     return {m["metric"]: m.get("value", "0") for m in measures}
 
 def extract_rating(value):
