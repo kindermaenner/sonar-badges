@@ -259,7 +259,7 @@ def main():
     save_badge(
         project_key,
         "security_hotspots",
-        make_badge("hotspots reviewed", hotspots_count, RATING_COLORS.get(hotspots_rating, "#555")),
+        make_badge("security hotspots", hotspots_count, RATING_COLORS.get(hotspots_rating, "#555")),
     )
 
     # Duplications (value)
