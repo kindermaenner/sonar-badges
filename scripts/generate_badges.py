@@ -6,6 +6,8 @@ import json
 SONAR_URL = os.getenv("SONAR_HOST_URL")
 TOKEN = os.getenv("SONAR_TOKEN")
 DUPLICATION_GOOD_THRESHOLD = 3.0
+BADGE_HEIGHT = 20
+FONT_SIZE = 11
 
 # All metrics we need from SonarQube
 METRICS = [
@@ -147,25 +149,47 @@ def make_badge(label, value, color):
     value_text = str(value)
 
     # Compact width calculation
-    label_width = 7 * len(label_text) + 20 + icon_offset
-    value_width = 7 * len(value_text) + 20
+    # Shields.io uses approximately these widths
+    label_text_width = 7 * len(label_text)
+    value_text_width = 7 * len(value_text)
+    
+    label_width = label_text_width + 20 + icon_offset
+    value_width = value_text_width + 20
     total_width = label_width + value_width
 
     icon_svg = ""
     if has_icon:
         # Drawing icon at x=7, y=3 with scaling
-        style = 'stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"'
-        if icon_key in ["security_hotspots", "duplicated_lines_density"]:
-             style = 'fill="#fff"'
+        style = 'fill="#fff"'
+        if icon_key not in ["security_hotspots", "duplicated_lines_density"]:
+             style = 'stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"'
         
         icon_svg = f'<g transform="translate(7, 3) scale(0.6)"><path d="{icon_path}" {style}/></g>'
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="20">
-  <rect width="{total_width}" height="20" rx="3" ry="3" fill="#555"/>
-  <rect x="{label_width}" width="{value_width}" height="20" rx="3" ry="3" fill="{color}"/>
-  {icon_svg}
-  <text x="{10 + icon_offset}" y="14" fill="#fff" font-family="Verdana" font-size="11">{label_text}</text>
-  <text x="{label_width + 10}" y="14" fill="#fff" font-family="Verdana" font-size="11">{value_text}</text>
+    # Text positions
+    label_x = (label_width + icon_offset) / 2
+    value_x = label_width + (value_width / 2)
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="{BADGE_HEIGHT}">
+  <linearGradient id="b" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="a">
+    <rect width="{total_width}" height="{BADGE_HEIGHT}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#a)">
+    <path fill="#555" d="M0 0h{label_width}v{BADGE_HEIGHT}H0z"/>
+    <path fill="{color}" d="M{label_width} 0h{value_width}v{BADGE_HEIGHT}H{label_width}z"/>
+    <path fill="url(#b)" d="M0 0h{total_width}v{BADGE_HEIGHT}H0z"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="{FONT_SIZE}">
+    {icon_svg}
+    <text x="{label_x}" y="15" fill="#010101" fill-opacity=".3">{label_text}</text>
+    <text x="{label_x}" y="14">{label_text}</text>
+    <text x="{value_x}" y="15" fill="#010101" fill-opacity=".3">{value_text}</text>
+    <text x="{value_x}" y="14">{value_text}</text>
+  </g>
 </svg>
 """
 
