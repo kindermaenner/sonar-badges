@@ -1,8 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">
-  <rect width="200" height="20" fill="#555"/>
-  <rect x="80" width="120" height="20" fill="#4c1"/>
-  <text x="40" y="14" fill="#fff" text-anchor="middle"
-        font-family="Verdana" font-size="11">hotspots</text>
-  <text x="140" y="14" fill="#fff" text-anchor="middle"
-        font-family="Verdana" font-size="11">1</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="20">
+  <rect width="180" height="20" rx="3" ry="3" fill="#555"/>
+  <rect x="153" width="27" height="20" rx="3" ry="3" fill="#555"/>
+  <text x="10" y="14" fill="#fff" font-family="Verdana" font-size="11">🔥 security_hotspots</text>
+  <text x="163" y="14" fill="#fff" font-family="Verdana" font-size="11">1</text>
 </svg>
