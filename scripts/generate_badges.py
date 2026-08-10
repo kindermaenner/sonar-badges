@@ -4,6 +4,7 @@ import requests
 
 SONAR_URL = os.getenv("SONAR_HOST_URL")
 TOKEN = os.getenv("SONAR_TOKEN")
+DUPLICATION_GOOD_THRESHOLD = 3.0
 
 # All metrics we need from SonarQube
 METRICS = [
@@ -37,6 +38,22 @@ RATING_COLORS = {
     "E": "#e05d44",
 }
 
+def color_for_duplications(value):
+    try:
+        v = float(value)
+    except ValueError:
+        return "#555"
+
+    if v <= DUPLICATION_GOOD_THRESHOLD:
+        return "#4c1"       # sehr gut
+    elif v <= DUPLICATION_GOOD_THRESHOLD + 2:
+        return "#97CA00"    # gut
+    elif v <= 10:
+        return "#dfb317"    # mittel
+    elif v <= 20:
+        return "#fe7d37"    # schlecht
+    else:
+        return "#e05d44"    # sehr schlecht
 
 def color_for_coverage(value):
     """Dynamic color scale for coverage & duplications."""
@@ -96,6 +113,11 @@ def fetch_metrics(project_key):
 
     return {m["metric"]: m.get("value", "0") for m in measures}
 
+def extract_rating(value):
+    """Extract the rating letter from values like '0A', '21C', '0.0%E'."""
+    if not value:
+        return None
+    return value[-1] if value[-1] in "ABCDE" else None
 
 def make_badge(label, value, color):
     """Generate compact SVG badge with rounded corners."""
@@ -115,7 +137,6 @@ def make_badge(label, value, color):
 </svg>
 """
 
-
 def save_badge(project, name, svg):
     """Write badge SVG to disk."""
     out_dir = f"badges/{project}"
@@ -127,7 +148,6 @@ def save_badge(project, name, svg):
         file.write(svg)
 
     print(f"Created {filename}")
-
 
 def main():
     if len(sys.argv) < 2:
@@ -151,7 +171,7 @@ def main():
     )
 
     # Bugs (rating)
-    bugs_rating = metrics.get("reliability_rating", None)
+    bugs_rating = extract_rating(metrics.get("reliability_rating"))
     save_badge(
         project_key,
         "bugs",
@@ -159,7 +179,7 @@ def main():
     )
 
     # Vulnerabilities (rating)
-    vuln_rating = metrics.get("security_rating", None)
+    vuln_rating = extract_rating(metrics.get("security_rating"))
     save_badge(
         project_key,
         "vulnerabilities",
@@ -167,7 +187,7 @@ def main():
     )
 
     # Code Smells (rating)
-    smells_rating = metrics.get("sqale_rating", None)
+    smells_rating = extract_rating(metrics.get("sqale_rating"))
     save_badge(
         project_key,
         "code_smells",
@@ -175,7 +195,7 @@ def main():
     )
 
     # Hotspots Reviewed (rating)
-    hotspots_rating = metrics.get("security_hotspots_reviewed_rating", None)
+    hotspots_rating = extract_rating(metrics.get("security_hotspots_reviewed_rating"))
     if hotspots_rating:
         save_badge(
             project_key,
@@ -188,8 +208,9 @@ def main():
     save_badge(
         project_key,
         "duplicated_lines_density",
-        make_badge("duplicated_lines_density", f"{dups}%", color_for_coverage(dups)),
+        make_badge("duplicated_lines_density", f"{dups}%", color_for_duplications(dups)),
     )
+
 
 
 if __name__ == "__main__":
