@@ -1,8 +1,6 @@
 import os
 import sys
-
 import requests
-
 
 SONAR_URL = os.getenv("SONAR_HOST_URL")
 TOKEN = os.getenv("SONAR_TOKEN")
@@ -12,7 +10,46 @@ METRICS = [
     "bugs",
     "code_smells",
     "security_hotspots",
+    "reliability_rating",
+    "security_rating",
+    "sqale_rating",
 ]
+
+ICONS = {
+    "coverage": "📊",
+    "bugs": "🐞",
+    "code_smells": "💨",
+    "security_hotspots": "🔥",
+    "reliability_rating": "🐞",
+    "security_rating": "🔒",
+    "sqale_rating": "💨",
+}
+
+RATING_COLORS = {
+    "A": "#4c1",
+    "B": "#97CA00",
+    "C": "#dfb317",
+    "D": "#fe7d37",
+    "E": "#e05d44",
+}
+
+
+def color_for_coverage(value):
+    try:
+        v = float(value)
+    except ValueError:
+        return "#555"
+
+    if v >= 80:
+        return "#4c1"
+    elif v >= 60:
+        return "#97CA00"
+    elif v >= 40:
+        return "#dfb317"
+    elif v >= 20:
+        return "#fe7d37"
+    else:
+        return "#e05d44"
 
 
 def fetch_metrics(project_key):
@@ -47,25 +84,27 @@ def fetch_metrics(project_key):
     data = response.json()
 
     if "component" not in data:
-        raise RuntimeError(
-            f"Unexpected SonarQube response: {data}"
-        )
+        raise RuntimeError(f"Unexpected SonarQube response: {data}")
 
     measures = data["component"].get("measures", [])
 
-    return {
-        metric["metric"]: metric.get("value", "0")
-        for metric in measures
-    }
+    return {m["metric"]: m.get("value", "0") for m in measures}
 
-def make_badge(label, value, color="#4c1"):
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">
-  <rect width="200" height="20" fill="#555"/>
-  <rect x="80" width="120" height="20" fill="{color}"/>
-  <text x="40" y="14" fill="#fff" text-anchor="middle"
-        font-family="Verdana" font-size="11">{label}</text>
-  <text x="140" y="14" fill="#fff" text-anchor="middle"
-        font-family="Verdana" font-size="11">{value}</text>
+
+def make_badge(label, value, color):
+    # kompakte Breite berechnen
+    label_text = f"{ICONS.get(label, '')} {label}"
+    value_text = str(value)
+
+    label_width = 7 * len(label_text) + 20
+    value_width = 7 * len(value_text) + 20
+    total_width = label_width + value_width
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="20">
+  <rect width="{total_width}" height="20" rx="3" ry="3" fill="#555"/>
+  <rect x="{label_width}" width="{value_width}" height="20" rx="3" ry="3" fill="{color}"/>
+  <text x="10" y="14" fill="#fff" font-family="Verdana" font-size="11">{label_text}</text>
+  <text x="{label_width + 10}" y="14" fill="#fff" font-family="Verdana" font-size="11">{value_text}</text>
 </svg>
 """
 
@@ -95,33 +134,42 @@ def main():
 
     metrics = fetch_metrics(project_key)
 
+    # Coverage
     coverage = metrics.get("coverage", "0")
-    bugs = metrics.get("bugs", "0")
-    code_smells = metrics.get("code_smells", "0")
-    security_hotspots = metrics.get("security_hotspots", "0")
-
     save_badge(
         project_key,
         "coverage",
-        make_badge("coverage", f"{coverage}%"),
+        make_badge("coverage", f"{coverage}%", color_for_coverage(coverage)),
     )
 
+    # Bugs
+    bugs = metrics.get("bugs", "0")
+    rating_bugs = metrics.get("reliability_rating", None)
+    color_bugs = RATING_COLORS.get(rating_bugs, "#555")
     save_badge(
         project_key,
         "bugs",
-        make_badge("bugs", bugs),
+        make_badge("bugs", bugs, color_bugs),
     )
 
+    # Code Smells
+    smells = metrics.get("code_smells", "0")
+    rating_smells = metrics.get("sqale_rating", None)
+    color_smells = RATING_COLORS.get(rating_smells, "#555")
     save_badge(
         project_key,
         "code_smells",
-        make_badge("smells", code_smells),
+        make_badge("code_smells", smells, color_smells),
     )
 
+    # Security Hotspots
+    hotspots = metrics.get("security_hotspots", "0")
+    rating_sec = metrics.get("security_rating", None)
+    color_sec = RATING_COLORS.get(rating_sec, "#555")
     save_badge(
         project_key,
         "security_hotspots",
-        make_badge("hotspots", security_hotspots),
+        make_badge("security_hotspots", hotspots, color_sec),
     )
 
 
