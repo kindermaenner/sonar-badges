@@ -19,7 +19,6 @@ METRICS = [
     "security_rating",
     "sqale_rating",
     "security_review_rating",
-    "security_hotspots_reviewed_rating",
 ]
 
 # Monochrome SVG paths for each badge
@@ -235,7 +234,7 @@ def main():
 
     # Hotspots Reviewed (Count + Rating for color)
     hotspots_count = metrics.get("security_hotspots", "0")
-    hotspots_rating = extract_rating(metrics.get("security_review_rating") or metrics.get("security_hotspots_reviewed_rating"))
+    hotspots_rating = extract_rating(metrics.get("security_review_rating"))
     save_badge(
         project_key,
         "security_hotspots",
