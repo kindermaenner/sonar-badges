@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="172" height="20">
+  <rect width="172" height="20" rx="3" ry="3" fill="#555"/>
+  <rect x="124" width="48" height="20" rx="3" ry="3" fill="#4c1"/>
+  <g transform="translate(7, 3) scale(0.6)"><path d="M7 7h10v10H7zM11 11h10v10H11z" fill="#fff"/></g>
+  <text x="30" y="14" fill="#fff" font-family="Verdana" font-size="11">duplications</text>
+  <text x="134" y="14" fill="#fff" font-family="Verdana" font-size="11">0.0%</text>
+</svg>
