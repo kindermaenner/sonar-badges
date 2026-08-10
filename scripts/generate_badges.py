@@ -5,6 +5,7 @@ import requests
 SONAR_URL = os.getenv("SONAR_HOST_URL")
 TOKEN = os.getenv("SONAR_TOKEN")
 
+# All metrics we need from SonarQube
 METRICS = [
     "coverage",
     "bugs",
@@ -17,6 +18,7 @@ METRICS = [
     "sqale_rating",
 ]
 
+# Icons for each badge
 ICONS = {
     "coverage": "📊",
     "bugs": "🐞",
@@ -26,6 +28,7 @@ ICONS = {
     "duplicated_lines_density": "🔁",
 }
 
+# Colors for A–E ratings
 RATING_COLORS = {
     "A": "#4c1",
     "B": "#97CA00",
@@ -36,6 +39,7 @@ RATING_COLORS = {
 
 
 def color_for_coverage(value):
+    """Dynamic color scale for coverage & duplications."""
     try:
         v = float(value)
     except ValueError:
@@ -54,6 +58,7 @@ def color_for_coverage(value):
 
 
 def fetch_metrics(project_key):
+    """Fetch all metrics from SonarQube."""
     if not SONAR_URL:
         raise RuntimeError("SONAR_HOST_URL is not set")
 
@@ -93,9 +98,11 @@ def fetch_metrics(project_key):
 
 
 def make_badge(label, value, color):
+    """Generate compact SVG badge with rounded corners."""
     label_text = f"{ICONS.get(label, '')} {label}"
     value_text = str(value)
 
+    # Compact width calculation
     label_width = 7 * len(label_text) + 20
     value_width = 7 * len(value_text) + 20
     total_width = label_width + value_width
@@ -110,6 +117,7 @@ def make_badge(label, value, color):
 
 
 def save_badge(project, name, svg):
+    """Write badge SVG to disk."""
     out_dir = f"badges/{project}"
     os.makedirs(out_dir, exist_ok=True)
 
@@ -134,7 +142,7 @@ def main():
 
     metrics = fetch_metrics(project_key)
 
-    # Coverage
+    # Coverage (value)
     coverage = metrics.get("coverage", "0")
     save_badge(
         project_key,
@@ -142,45 +150,40 @@ def main():
         make_badge("coverage", f"{coverage}%", color_for_coverage(coverage)),
     )
 
-    # Bugs
-    bugs = metrics.get("bugs", "0")
-    rating_bugs = metrics.get("reliability_rating", None)
-    color_bugs = RATING_COLORS.get(rating_bugs, "#555")
+    # Bugs (rating)
+    bugs_rating = metrics.get("reliability_rating", None)
     save_badge(
         project_key,
         "bugs",
-        make_badge("bugs", bugs, color_bugs),
+        make_badge("bugs", bugs_rating, RATING_COLORS.get(bugs_rating, "#555")),
     )
 
-    # Vulnerabilities
-    vulns = metrics.get("vulnerabilities", "0")
-    rating_vulns = metrics.get("security_rating", None)
-    color_vulns = RATING_COLORS.get(rating_vulns, "#555")
+    # Vulnerabilities (rating)
+    vuln_rating = metrics.get("security_rating", None)
     save_badge(
         project_key,
         "vulnerabilities",
-        make_badge("vulnerabilities", vulns, color_vulns),
+        make_badge("vulnerabilities", vuln_rating, RATING_COLORS.get(vuln_rating, "#555")),
     )
 
-    # Code Smells
-    smells = metrics.get("code_smells", "0")
-    rating_smells = metrics.get("sqale_rating", None)
-    color_smells = RATING_COLORS.get(rating_smells, "#555")
+    # Code Smells (rating)
+    smells_rating = metrics.get("sqale_rating", None)
     save_badge(
         project_key,
         "code_smells",
-        make_badge("code_smells", smells, color_smells),
+        make_badge("code_smells", smells_rating, RATING_COLORS.get(smells_rating, "#555")),
     )
 
-    # Security Hotspots
-    hotspots = metrics.get("security_hotspots", "0")
-    save_badge(
-        project_key,
-        "security_hotspots",
-        make_badge("security_hotspots", hotspots, "#fe7d37"),
-    )
+    # Hotspots Reviewed (rating)
+    hotspots_rating = metrics.get("security_hotspots_reviewed_rating", None)
+    if hotspots_rating:
+        save_badge(
+            project_key,
+            "security_hotspots",
+            make_badge("security_hotspots", hotspots_rating, RATING_COLORS.get(hotspots_rating, "#555")),
+        )
 
-    # Duplications
+    # Duplications (value)
     dups = metrics.get("duplicated_lines_density", "0")
     save_badge(
         project_key,
