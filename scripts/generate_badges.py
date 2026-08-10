@@ -8,8 +8,10 @@ TOKEN = os.getenv("SONAR_TOKEN")
 METRICS = [
     "coverage",
     "bugs",
+    "vulnerabilities",
     "code_smells",
     "security_hotspots",
+    "duplicated_lines_density",
     "reliability_rating",
     "security_rating",
     "sqale_rating",
@@ -18,11 +20,10 @@ METRICS = [
 ICONS = {
     "coverage": "📊",
     "bugs": "🐞",
+    "vulnerabilities": "🔒",
     "code_smells": "💨",
     "security_hotspots": "🔥",
-    "reliability_rating": "🐞",
-    "security_rating": "🔒",
-    "sqale_rating": "💨",
+    "duplicated_lines_density": "🔁",
 }
 
 RATING_COLORS = {
@@ -92,7 +93,6 @@ def fetch_metrics(project_key):
 
 
 def make_badge(label, value, color):
-    # kompakte Breite berechnen
     label_text = f"{ICONS.get(label, '')} {label}"
     value_text = str(value)
 
@@ -152,6 +152,16 @@ def main():
         make_badge("bugs", bugs, color_bugs),
     )
 
+    # Vulnerabilities
+    vulns = metrics.get("vulnerabilities", "0")
+    rating_vulns = metrics.get("security_rating", None)
+    color_vulns = RATING_COLORS.get(rating_vulns, "#555")
+    save_badge(
+        project_key,
+        "vulnerabilities",
+        make_badge("vulnerabilities", vulns, color_vulns),
+    )
+
     # Code Smells
     smells = metrics.get("code_smells", "0")
     rating_smells = metrics.get("sqale_rating", None)
@@ -164,12 +174,18 @@ def main():
 
     # Security Hotspots
     hotspots = metrics.get("security_hotspots", "0")
-    rating_sec = metrics.get("security_rating", None)
-    color_sec = RATING_COLORS.get(rating_sec, "#555")
     save_badge(
         project_key,
         "security_hotspots",
-        make_badge("security_hotspots", hotspots, color_sec),
+        make_badge("security_hotspots", hotspots, "#fe7d37"),
+    )
+
+    # Duplications
+    dups = metrics.get("duplicated_lines_density", "0")
+    save_badge(
+        project_key,
+        "duplicated_lines_density",
+        make_badge("duplicated_lines_density", f"{dups}%", color_for_coverage(dups)),
     )
 
 
