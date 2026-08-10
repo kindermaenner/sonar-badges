@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="159" height="20">
-  <rect width="159" height="20" rx="3" ry="3" fill="#555"/>
-  <rect x="111" width="48" height="20" rx="3" ry="3" fill="#555"/>
-  <text x="10" y="14" fill="#fff" font-family="Verdana" font-size="11">💨 code_smells</text>
-  <text x="121" y="14" fill="#fff" font-family="Verdana" font-size="11">None</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="151" height="20">
+  <rect width="151" height="20" rx="3" ry="3" fill="#555"/>
+  <rect x="117" width="34" height="20" rx="3" ry="3" fill="#4c1"/>
+  <g transform="translate(7, 3) scale(0.6)"><path d="M17 20c0-2.5-2-4.5-4.5-4.5S8 17.5 8 20M13 15c0-2.2-1.8-4-4-4s-4 1.8-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+  <text x="30" y="14" fill="#fff" font-family="Verdana" font-size="11">code smells</text>
+  <text x="127" y="14" fill="#fff" font-family="Verdana" font-size="11">21</text>
 </svg>

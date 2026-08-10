@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="187" height="20">
-  <rect width="187" height="20" rx="3" ry="3" fill="#555"/>
-  <rect x="139" width="48" height="20" rx="3" ry="3" fill="#555"/>
-  <text x="10" y="14" fill="#fff" font-family="Verdana" font-size="11">🔒 vulnerabilities</text>
-  <text x="149" y="14" fill="#fff" font-family="Verdana" font-size="11">None</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="172" height="20">
+  <rect width="172" height="20" rx="3" ry="3" fill="#555"/>
+  <rect x="145" width="27" height="20" rx="3" ry="3" fill="#4c1"/>
+  <g transform="translate(7, 3) scale(0.6)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+  <text x="30" y="14" fill="#fff" font-family="Verdana" font-size="11">vulnerabilities</text>
+  <text x="155" y="14" fill="#fff" font-family="Verdana" font-size="11">0</text>
 </svg>
