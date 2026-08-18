@@ -15,7 +15,7 @@
     <g transform="translate(7, 3) scale(0.6)"><path d="M17 20c0-2.5-2-4.5-4.5-4.5S8 17.5 8 20M13 15c0-2.2-1.8-4-4-4s-4 1.8-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
     <text x="68.5" y="15" fill="#010101" fill-opacity=".3">code smells</text>
     <text x="68.5" y="14">code smells</text>
-    <text x="134.0" y="15" fill="#010101" fill-opacity=".3">39</text>
-    <text x="134.0" y="14">39</text>
+    <text x="134.0" y="15" fill="#010101" fill-opacity=".3">40</text>
+    <text x="134.0" y="14">40</text>
   </g>
 </svg>
