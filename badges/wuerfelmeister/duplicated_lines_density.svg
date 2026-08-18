@@ -15,7 +15,7 @@
     <g transform="translate(7, 3) scale(0.6)"><path d="M7 7h10v10H7zM11 11h10v10H11z" fill="#fff"/></g>
     <text x="72.0" y="15" fill="#010101" fill-opacity=".3">duplications</text>
     <text x="72.0" y="14">duplications</text>
-    <text x="148.0" y="15" fill="#010101" fill-opacity=".3">0.0%</text>
-    <text x="148.0" y="14">0.0%</text>
+    <text x="148.0" y="15" fill="#010101" fill-opacity=".3">1.0%</text>
+    <text x="148.0" y="14">1.0%</text>
   </g>
 </svg>

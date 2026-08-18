@@ -8,14 +8,14 @@
   </clipPath>
   <g clip-path="url(#a)">
     <path fill="#555" d="M0 0h96v20H0z"/>
-    <path fill="#dfb317" d="M96 0h55v20H96z"/>
+    <path fill="#fe7d37" d="M96 0h55v20H96z"/>
     <path fill="url(#b)" d="M0 0h151v20H0z"/>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
     <g transform="translate(7, 3) scale(0.6)"><path d="M12 20V10M18 20V4M6 20v-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
     <text x="58.0" y="15" fill="#010101" fill-opacity=".3">coverage</text>
     <text x="58.0" y="14">coverage</text>
-    <text x="123.5" y="15" fill="#010101" fill-opacity=".3">44.6%</text>
-    <text x="123.5" y="14">44.6%</text>
+    <text x="123.5" y="15" fill="#010101" fill-opacity=".3">33.4%</text>
+    <text x="123.5" y="14">33.4%</text>
   </g>
 </svg>
