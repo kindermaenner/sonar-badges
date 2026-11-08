@@ -15,7 +15,7 @@
     <g transform="translate(7, 3) scale(0.6)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
     <text x="82.5" y="15" fill="#010101" fill-opacity=".3">vulnerabilities</text>
     <text x="82.5" y="14">vulnerabilities</text>
-    <text x="158.5" y="15" fill="#010101" fill-opacity=".3">2</text>
-    <text x="158.5" y="14">2</text>
+    <text x="158.5" y="15" fill="#010101" fill-opacity=".3">1</text>
+    <text x="158.5" y="14">1</text>
   </g>
 </svg>
